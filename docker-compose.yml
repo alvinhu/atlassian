@@ -6,13 +6,20 @@ services:
     restart: always
     image: atlassian/jira-software:latest
     ports:
-      - '8080:8080'
+      - 8080:8080
     environment:
-      - JAVA_OPTS=-javaagent:/opt/atlassian/jira/atlassian-agent.jar
+      # 下面四个环境变量参考自 /opt/atlassian/etc/server.xml.j2
+      # 用来配置 /opt/atlassian/jira/conf/server.xml
+      - ATL_TOMCAT_SECURE=true
+      - ATL_TOMCAT_SCHEME=https
+      - ATL_PROXY_NAME=jira.atlassian.com
+      - ATL_PROXY_PORT=443
+      # 注册代理路径
+      - JAVA_OPTS=-javaagent:/opt/atlassian/jira/atlassian-agent-1.3.1.jar
     volumes:
-      - './jira/data:/var/atlassian/application-data/jira'
-      - './mysql-connector-java-8.0.29.jar:/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/mysql-connector-java-8.0.29.jar'
-      - './atlassian-agent.jar:/opt/atlassian/jira/atlassian-agent.jar'
+      - ./jira/data:/var/atlassian/application-data/jira
+      - ./atlassian-agent-1.3.1.jar:/opt/atlassian/jira/atlassian-agent-1.3.1.jar
+      - ./mysql-connector-java-8.0.29.jar:/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/mysql-connector-java-8.0.29.jar
     networks:
       - jira-network
     depends_on:
@@ -28,8 +35,8 @@ services:
         --character-set-server=utf8mb4,
         --collation-server=utf8mb4_bin,
         --default-storage-engine=INNODB,
-        --innodb_default_row_format=DYNAMIC,
-        --innodb_log_file_size=2G
+        --innodb-default-row-format=DYNAMIC,
+        --innodb-log-file-size=2G
       ]
     environment:
       - MYSQL_ROOT_PASSWORD=atlassian
@@ -37,7 +44,7 @@ services:
       - MYSQL_USER=jira
       - MYSQL_PASSWORD=jira
     volumes:
-      - './jira/mysql:/var/lib/mysql'
+      - ./jira/mysql:/var/lib/mysql
     networks:
       - jira-network
 
@@ -46,14 +53,21 @@ services:
     restart: always
     image: atlassian/confluence:latest
     ports:
-      - '8090:8090'
-      - '8091:8091'
+      - 8090:8090
+      - 8091:8091
     environment:
-      - JAVA_OPTS=-javaagent:/opt/atlassian/confluence/atlassian-agent.jar
+      # 下面四个环境变量参考自 /opt/atlassian/etc/server.xml.j2
+      # 用来配置 /opt/atlassian/confluence/conf/server.xml
+      - ATL_TOMCAT_SECURE=true
+      - ATL_TOMCAT_SCHEME=https
+      - ATL_PROXY_NAME=confluence.atlassian.com
+      - ATL_PROXY_PORT=443
+      # 注册代理路径
+      - JAVA_OPTS=-javaagent:/opt/atlassian/confluence/atlassian-agent-1.3.1.jar
     volumes:
-      - './confluence/data:/var/atlassian/application-data/confluence'
-      - './mysql-connector-java-8.0.29.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/mysql-connector-java-8.0.29.jar'
-      - './atlassian-agent.jar:/opt/atlassian/confluence/atlassian-agent.jar'
+      - ./confluence/data:/var/atlassian/application-data/confluence
+      - ./atlassian-agent-1.3.1.jar:/opt/atlassian/confluence/atlassian-agent-1.3.1.jar
+      - ./mysql-connector-java-8.0.29.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/mysql-connector-java-8.0.29.jar
     networks:
       - conf-network
     depends_on:
@@ -69,11 +83,11 @@ services:
         --character-set-server=utf8mb4,
         --collation-server=utf8mb4_bin,
         --default-storage-engine=INNODB,
-        --max_allowed_packet=256M,
-        --innodb_log_file_size=2G,
+        --max-allowed-packet=256M,
+        --innodb-log-file-size=2G,
         --transaction-isolation=READ-COMMITTED,
-        --binlog_format=row,
-        --log_bin_trust_function_creators=1
+        --binlog-format=ROW,
+        --log-bin-trust-function-creators=1
       ]
     environment:
       - MYSQL_ROOT_PASSWORD=atlassian
@@ -81,7 +95,7 @@ services:
       - MYSQL_USER=confluence
       - MYSQL_PASSWORD=confluence
     volumes:
-      - './confluence/mysql:/var/lib/mysql'
+      - ./confluence/mysql:/var/lib/mysql
     networks:
       - conf-network
 
