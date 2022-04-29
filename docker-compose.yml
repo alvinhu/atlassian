@@ -18,8 +18,11 @@ services:
       # 中国上海时区
       - TZ=Asia/Shanghai
     volumes:
+      # 数据文件夹
       - ./jira/data:/var/atlassian/application-data/jira
+      # 注册代理
       - ./atlassian-agent-1.3.1.jar:/opt/atlassian/jira/atlassian-agent-1.3.1.jar
+      # MySQL 8.0 连接器
       - ./mysql-connector-java-8.0.29.jar:/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/mysql-connector-java-8.0.29.jar
     networks:
       atlassian:
@@ -33,6 +36,7 @@ services:
     image: atlassian/confluence:latest
     ports:
       - 8090:8090
+      # 协同编辑
       - 8091:8091
     environment:
       # 下面四个环境变量用来配置 /opt/atlassian/jira/conf/server.xml，参考自 /opt/atlassian/etc/server.xml.j2
@@ -45,8 +49,11 @@ services:
       # 中国上海时区
       - TZ=Asia/Shanghai
     volumes:
+      # 数据文件夹
       - ./confluence/data:/var/atlassian/application-data/confluence
+      # 注册代理
       - ./atlassian-agent-1.3.1.jar:/opt/atlassian/confluence/atlassian-agent-1.3.1.jar
+      # MySQL 8.0 连接器
       - ./mysql-connector-java-8.0.29.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/mysql-connector-java-8.0.29.jar
     networks:
       atlassian:
@@ -68,9 +75,13 @@ services:
         --innodb-log-file-size=2G
       ]
     environment:
+      # root 密码
       - MYSQL_ROOT_PASSWORD=atlassian
+      # 数据库名
       - MYSQL_DATABASE=jira
+      # 用户名
       - MYSQL_USER=jira
+      # 密码
       - MYSQL_PASSWORD=jira
     volumes:
       - ./jira/mysql:/var/lib/mysql
@@ -95,9 +106,13 @@ services:
         --log-bin-trust-function-creators=1
       ]
     environment:
+      # root 密码
       - MYSQL_ROOT_PASSWORD=atlassian
+      # 数据库名
       - MYSQL_DATABASE=confluence
+      # 用户名
       - MYSQL_USER=confluence
+      # 密码
       - MYSQL_PASSWORD=confluence
     volumes:
       - ./confluence/mysql:/var/lib/mysql
