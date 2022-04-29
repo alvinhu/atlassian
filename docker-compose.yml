@@ -8,14 +8,15 @@ services:
     ports:
       - 8080:8080
     environment:
-      # 下面四个环境变量参考自 /opt/atlassian/etc/server.xml.j2
-      # 用来配置 /opt/atlassian/jira/conf/server.xml
+      # 下面四个环境变量用来配置 /opt/atlassian/jira/conf/server.xml，参考自 /opt/atlassian/etc/server.xml.j2
       - ATL_TOMCAT_SECURE=true
       - ATL_TOMCAT_SCHEME=https
       - ATL_PROXY_NAME=jira.atlassian.com
       - ATL_PROXY_PORT=443
       # 注册代理路径
       - JAVA_OPTS=-javaagent:/opt/atlassian/jira/atlassian-agent-1.3.1.jar
+      # 中国上海时区
+      - TZ=Asia/Shanghai
     volumes:
       - ./jira/data:/var/atlassian/application-data/jira
       - ./atlassian-agent-1.3.1.jar:/opt/atlassian/jira/atlassian-agent-1.3.1.jar
@@ -34,14 +35,15 @@ services:
       - 8090:8090
       - 8091:8091
     environment:
-      # 下面四个环境变量参考自 /opt/atlassian/etc/server.xml.j2
-      # 用来配置 /opt/atlassian/confluence/conf/server.xml
+      # 下面四个环境变量用来配置 /opt/atlassian/jira/conf/server.xml，参考自 /opt/atlassian/etc/server.xml.j2
       - ATL_TOMCAT_SECURE=true
       - ATL_TOMCAT_SCHEME=https
       - ATL_PROXY_NAME=confluence.atlassian.com
       - ATL_PROXY_PORT=443
       # 注册代理路径
       - JAVA_OPTS=-javaagent:/opt/atlassian/confluence/atlassian-agent-1.3.1.jar
+      # 中国上海时区
+      - TZ=Asia/Shanghai
     volumes:
       - ./confluence/data:/var/atlassian/application-data/confluence
       - ./atlassian-agent-1.3.1.jar:/opt/atlassian/confluence/atlassian-agent-1.3.1.jar
