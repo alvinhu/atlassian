@@ -29,6 +29,8 @@ services:
         aliases:
           - ${JIRA_PROXY_NAME:-jira.example.com}
         ipv4_address: 172.20.0.2
+    depends_on:
+      - jira-mysql
 
   confluence:
     image: atlassian/confluence-server:latest
@@ -58,6 +60,8 @@ services:
         aliases:
           - ${CONFLUENCE_PROXY_NAME:-confluence.example.com}
         ipv4_address: 172.20.0.3
+    depends_on:
+      - confluence-mysql
 
   bitbucket:
     image: atlassian/bitbucket-server:latest
@@ -87,6 +91,100 @@ services:
         aliases:
           - ${BITBUCKET_PROXY_NAME:-bitbucket.example.com}
         ipv4_address: 172.20.0.4
+    depends_on:
+      - bitbucket-mysql
+
+  jira-mysql:
+    image: mysql:8.0
+    container_name: jira-mysql
+    restart: always
+    command:
+      [
+        mysqld,
+        --character-set-server=utf8mb4,
+        --collation-server=utf8mb4_bin,
+        --default-storage-engine=INNODB,
+        --innodb-default-row-format=DYNAMIC,
+        --innodb-log-file-size=2G
+      ]
+    environment:
+      # 中国上海时区
+      - TZ=Asia/Shanghai
+      # root 密码
+      - MYSQL_ROOT_PASSWORD=${JIRA_MYSQL_ROOT_PASSWORD:-atlassian}
+      # 数据库名
+      - MYSQL_DATABASE=${JIRA_MYSQL_DATABASE:-jira}
+      # 用户名
+      - MYSQL_USER=${JIRA_MYSQL_USER:-jira}
+      # 密码
+      - MYSQL_PASSWORD=${JIRA_MYSQL_PASSWORD:-jira}
+    volumes:
+      - jira-mysql:/var/lib/mysql
+    networks:
+      atlassian:
+        ipv4_address: 172.20.0.5
+
+  confluence-mysql:
+    image: mysql:8.0
+    container_name: confluence-mysql
+    restart: always
+    command:
+      [
+        mysqld,
+        --character-set-server=utf8mb4,
+        --collation-server=utf8mb4_bin,
+        --default-storage-engine=INNODB,
+        --max-allowed-packet=256M,
+        --innodb-log-file-size=2G,
+        --transaction-isolation=READ-COMMITTED,
+        --binlog-format=ROW,
+        --log-bin-trust-function-creators=1
+      ]
+    environment:
+      # 中国上海时区
+      - TZ=Asia/Shanghai
+      # root 密码
+      - MYSQL_ROOT_PASSWORD=${CONFLUENCE_MYSQL_ROOT_PASSWORD:-atlassian}
+      # 数据库名
+      - MYSQL_DATABASE=${CONFLUENCE_MYSQL_DATABASE:-confluence}
+      # 用户名
+      - MYSQL_USER=${CONFLUENCE_MYSQL_USER:-confluence}
+      # 密码
+      - MYSQL_PASSWORD=${CONFLUENCE_MYSQL_PASSWORD:-confluence}
+    volumes:
+      - confluence-mysql:/var/lib/mysql
+    networks:
+      atlassian:
+        ipv4_address: 172.20.0.6
+
+  bitbucket-mysql:
+    image: mysql:8.0
+    container_name: bitbucket-mysql
+    restart: always
+    command:
+      [
+        mysqld,
+        --character-set-server=utf8,
+        --collation-server=utf8_bin,
+        --binlog-format=MIXED,
+        --transaction-isolation=READ-COMMITTED
+      ]
+    environment:
+      # 中国上海时区
+      - TZ=Asia/Shanghai
+      # root 密码
+      - MYSQL_ROOT_PASSWORD=${BITBUCKET_MYSQL_ROOT_PASSWORD:-atlassian}
+      # 数据库名
+      - MYSQL_DATABASE=${BITBUCKET_MYSQL_DATABASE:-bitbucket}
+      # 用户名
+      - MYSQL_USER=${BITBUCKET_MYSQL_USER:-bitbucket}
+      # 密码
+      - MYSQL_PASSWORD=${BITBUCKET_MYSQL_PASSWORD:-bitbucket}
+    volumes:
+      - bitbucket-mysql:/var/lib/mysql
+    networks:
+      atlassian:
+        ipv4_address: 172.20.0.7
 
 networks:
   atlassian:
@@ -94,3 +192,11 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+
+volumes:
+  jira-data:
+  confluence-data:
+  bitbucket-data:
+  jira-mysql:
+  confluence-mysql:
+  bitbucket-mysql:

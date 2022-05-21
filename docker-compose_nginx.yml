@@ -5,8 +5,6 @@ services:
     image: atlassian/jira-software:latest
     container_name: jira
     restart: always
-    ports:
-      - 8080:8080
     environment:
       # 中国上海时区
       - TZ=Asia/Shanghai
@@ -29,13 +27,13 @@ services:
         aliases:
           - ${JIRA_PROXY_NAME:-jira.example.com}
         ipv4_address: 172.20.0.2
+    depends_on:
+      - nginx
 
   confluence:
     image: atlassian/confluence-server:latest
     container_name: confluence
     restart: always
-    ports:
-      - 8090:8090
     environment:
       # 中国上海时区
       - TZ=Asia/Shanghai
@@ -58,13 +56,13 @@ services:
         aliases:
           - ${CONFLUENCE_PROXY_NAME:-confluence.example.com}
         ipv4_address: 172.20.0.3
+    depends_on:
+      - nginx
 
   bitbucket:
     image: atlassian/bitbucket-server:latest
     container_name: bitbucket
     restart: always
-    ports:
-      - 7990:7990
     environment:
       # 中国上海时区
       - TZ=Asia/Shanghai
@@ -87,6 +85,23 @@ services:
         aliases:
           - ${BITBUCKET_PROXY_NAME:-bitbucket.example.com}
         ipv4_address: 172.20.0.4
+    depends_on:
+      - nginx
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - ${NGINX_PORT:-80}:80
+    environment:
+      # 中国上海时区
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      atlassian:
+        ipv4_address: 172.20.0.5
 
 networks:
   atlassian:
@@ -94,3 +109,8 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+
+volumes:
+  jira-data:
+  confluence-data:
+  bitbucket-data:
