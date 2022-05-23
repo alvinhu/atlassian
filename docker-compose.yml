@@ -82,3 +82,8 @@ services:
 networks:
   atlassian:
     name: atlassian
+
+volumes:
+  jira-data:
+  confluence-data:
+  bitbucket-data:
