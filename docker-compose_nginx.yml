@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   jira:
-    image: atlassian/jira-software:latest
+    image: atlassian/jira-software:8.22.2
     container_name: jira
     restart: always
     environment:
@@ -14,21 +14,21 @@ services:
       - ATL_TOMCAT_SCHEME=${JIRA_SCHEME:-http}
       - ATL_TOMCAT_SECURE=${JIRA_SECURE:-false}
       # 注册代理路径
-      - JAVA_OPTS=-javaagent:/opt/atlassian/atlassian-agent-1.3.1.jar
+      - JAVA_OPTS=-javaagent:/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/atlassian-agent-1.3.1.jar
     volumes:
       # 数据卷
       - jira-data:/var/atlassian/application-data/jira
       # MySQL 8.0 连接器
-      - ./utils/mysql-connector-java-8.0.29.jar:/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/mysql-connector-java-8.0.29.jar
+      - ./utils/mysql-connector-java-8.0.29.jar:/opt/atlassian/jira/lib/mysql-connector-java-8.0.29.jar
       # 注册代理
-      - ./utils/atlassian-agent-1.3.1.jar:/opt/atlassian/atlassian-agent-1.3.1.jar
+      - ./utils/atlassian-agent-1.3.1.jar:/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/atlassian-agent-1.3.1.jar
     networks:
-      atlassian:
+      - atlassian
     depends_on:
       - nginx
 
   confluence:
-    image: atlassian/confluence:latest
+    image: atlassian/confluence:7.17.2
     container_name: confluence
     restart: always
     environment:
@@ -40,21 +40,21 @@ services:
       - ATL_TOMCAT_SCHEME=${CONFLUENCE_SCHEME:-http}
       - ATL_TOMCAT_SECURE=${CONFLUENCE_SECURE:-false}
       # 注册代理路径
-      - JAVA_OPTS=-javaagent:/opt/atlassian/atlassian-agent-1.3.1.jar
+      - JAVA_OPTS=-javaagent:/opt/atlassian/confluence/confluence/WEB-INF/lib/atlassian-agent-1.3.1.jar
     volumes:
       # 数据卷
       - confluence-data:/var/atlassian/application-data/confluence
       # MySQL 8.0 连接器
       - ./utils/mysql-connector-java-8.0.29.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/mysql-connector-java-8.0.29.jar
       # 注册代理
-      - ./utils/atlassian-agent-1.3.1.jar:/opt/atlassian/atlassian-agent-1.3.1.jar
+      - ./utils/atlassian-agent-1.3.1.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/atlassian-agent-1.3.1.jar
     networks:
-      atlassian:
+      - atlassian
     depends_on:
       - nginx
 
   bitbucket:
-    image: atlassian/bitbucket:latest
+    image: atlassian/bitbucket:8.1.0
     container_name: bitbucket
     restart: always
     environment:
@@ -66,21 +66,21 @@ services:
       - SERVER_SCHEME=${BITBUCKET_SCHEME:-http}
       - SERVER_SECURE=${BITBUCKET_SECURE:-false}
       # 注册代理路径
-      - JVM_SUPPORT_RECOMMENDED_ARGS=-javaagent:/opt/atlassian/atlassian-agent-1.3.1-bitbucket.jar
+      - JVM_SUPPORT_RECOMMENDED_ARGS=-javaagent:/opt/atlassian/bitbucket/app/WEB-INF/lib/atlassian-agent-1.3.1-bitbucket.jar
     volumes:
       # 数据卷
       - bitbucket-data:/var/atlassian/application-data/bitbucket
-      # MySQL 8.0 连接器
-      - ./utils/mysql-connector-java-8.0.29.jar:/opt/atlassian/bitbucket/app/WEB-INF/lib/mysql-connector-java-8.0.29.jar
+      # MySQL 5.1 连接器（不支持 8.0 连接器）
+      - ./utils/mysql-connector-java-5.1.49.jar:/opt/atlassian/bitbucket/app/WEB-INF/lib/mysql-connector-java-5.1.49.jar
       # 注册代理（不能生成授权码）
-      - ./utils/atlassian-agent-1.3.1-bitbucket.jar:/opt/atlassian/atlassian-agent-1.3.1-bitbucket.jar
+      - ./utils/atlassian-agent-1.3.1-bitbucket.jar:/opt/atlassian/bitbucket/app/WEB-INF/lib/atlassian-agent-1.3.1-bitbucket.jar
     networks:
-      atlassian:
+      - atlassian
     depends_on:
       - nginx
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.21.6
     container_name: nginx
     restart: always
     ports:
