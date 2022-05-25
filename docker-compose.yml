@@ -4,7 +4,7 @@ services:
   jira:
     image: atlassian/jira-software:8.22.2
     container_name: jira
-    restart: always
+    restart: unless-stopped
     ports:
       - 8080:8080
     environment:
@@ -30,7 +30,7 @@ services:
   confluence:
     image: atlassian/confluence:7.17.2
     container_name: confluence
-    restart: always
+    restart: unless-stopped
     ports:
       - 8090:8090
     environment:
@@ -56,7 +56,7 @@ services:
   bitbucket:
     image: atlassian/bitbucket:8.1.0
     container_name: bitbucket
-    restart: always
+    restart: unless-stopped
     ports:
       - 7990:7990
     environment:
