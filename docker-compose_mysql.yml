@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   jira:
-    image: atlassian/jira-software:8.22.2
+    image: atlassian/jira-software:${JIRA_VERSION:-latest}
     container_name: jira
     restart: unless-stopped
     ports:
@@ -32,7 +32,7 @@ services:
       - jira-mysql
 
   confluence:
-    image: atlassian/confluence:7.17.2
+    image: atlassian/confluence:${CONFLUENCE_VERSION:-latest}
     container_name: confluence
     restart: unless-stopped
     ports:
@@ -62,7 +62,7 @@ services:
       - confluence-mysql
 
   bitbucket:
-    image: atlassian/bitbucket:8.1.0
+    image: atlassian/bitbucket:${BITBUCKET_VERSION:-latest}
     container_name: bitbucket
     restart: unless-stopped
     ports:
@@ -91,7 +91,7 @@ services:
       - bitbucket-mysql
 
   jira-mysql:
-    image: mysql:8.0.29
+    image: mysql:${MYSQL_VERSION:-latest}
     container_name: jira-mysql
     restart: unless-stopped
     command:
@@ -118,7 +118,7 @@ services:
       - jira-mysql:/var/lib/mysql
 
   confluence-mysql:
-    image: mysql:8.0.29
+    image: mysql:${MYSQL_VERSION:-latest}
     container_name: confluence-mysql
     restart: unless-stopped
     command:
@@ -148,7 +148,7 @@ services:
       - confluence-mysql:/var/lib/mysql
 
   bitbucket-mysql:
-    image: mysql:8.0.29
+    image: mysql:${MYSQL_VERSION:-latest}
     container_name: bitbucket-mysql
     restart: unless-stopped
     command:

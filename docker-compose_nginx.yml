@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   jira:
-    image: atlassian/jira-software:8.22.2
+    image: atlassian/jira-software:${JIRA_VERSION:-latest}
     container_name: jira
     restart: unless-stopped
     environment:
@@ -30,7 +30,7 @@ services:
       - nginx
 
   confluence:
-    image: atlassian/confluence:7.17.2
+    image: atlassian/confluence:${CONFLUENCE_VERSION:-latest}
     container_name: confluence
     restart: unless-stopped
     environment:
@@ -58,7 +58,7 @@ services:
       - nginx
 
   bitbucket:
-    image: atlassian/bitbucket:8.1.0
+    image: atlassian/bitbucket:${BITBUCKET_VERSION:-latest}
     container_name: bitbucket
     restart: unless-stopped
     environment:
@@ -85,7 +85,7 @@ services:
       - nginx
 
   nginx:
-    image: nginx:1.21.6
+    image: nginx:${NGINX_VERSION:-latest}
     container_name: nginx
     restart: unless-stopped
     ports:
