@@ -1,1 +1,6 @@
+### Env
 .env
+
+### Cert
+*.pem
+*.key
