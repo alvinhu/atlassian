@@ -23,7 +23,7 @@ services:
       # 数据卷
       - jira-data:/var/atlassian/application-data/jira
       # MySQL 8.0 连接器
-      - ./utils/mysql-connector-java-8.0.29.jar:/opt/atlassian/jira/lib/mysql-connector-java-8.0.29.jar
+      - ./utils/mysql-connector-j-8.0.31.jar:/opt/atlassian/jira/lib/mysql-connector-j-8.0.31.jar
       # 注册代理
       - ./utils/atlassian-agent-1.3.1.jar:/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/atlassian-agent-1.3.1.jar
     depends_on:
@@ -52,7 +52,7 @@ services:
       # 数据卷
       - confluence-data:/var/atlassian/application-data/confluence
       # MySQL 8.0 连接器
-      - ./utils/mysql-connector-java-8.0.29.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/mysql-connector-java-8.0.29.jar
+      - ./utils/mysql-connector-j-8.0.31.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/mysql-connector-j-8.0.31.jar
       # 注册代理
       - ./utils/atlassian-agent-1.3.1.jar:/opt/atlassian/confluence/confluence/WEB-INF/lib/atlassian-agent-1.3.1.jar
     depends_on:
@@ -181,7 +181,8 @@ services:
       # 时区
       - TZ=Asia/Shanghai
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/conf.d:/etc/nginx/conf.d
     networks:
       default:
         aliases:
